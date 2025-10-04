@@ -20,8 +20,6 @@ function ElectionDetailsPage() {
     if (id) {
       getElectionById(id);
     }
-
-
   }, [id, getElectionById]);
 
   useEffect(() => {
@@ -44,7 +42,7 @@ function ElectionDetailsPage() {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-lg max-w-md">
+        <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-sm max-w-md">
           <p className="text-red-800 font-semibold">Error: {error}</p>
         </div>
       </div>
@@ -75,20 +73,20 @@ function ElectionDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8 sm:py-12">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Hero Section */}
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8 transition-all hover:shadow-2xl">
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden mb-8 transition-all hover:shadow-lg">
           {imageUrl && (
-            <div className="relative h-80 overflow-hidden">
+            <div className="relative h-64 sm:h-80 overflow-hidden">
               <img
                 src={imageUrl}
                 alt={election.title}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-              <div className="absolute bottom-0 left-0 right-0 p-8">
-                <h1 className="text-5xl font-bold text-white mb-2 drop-shadow-lg">
+              <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-8">
+                <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2 drop-shadow-lg">
                   {election.title}
                 </h1>
               </div>
@@ -96,15 +94,15 @@ function ElectionDetailsPage() {
           )}
           
           {!imageUrl && (
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-12">
-              <h1 className="text-5xl font-bold text-white mb-2">
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-8 sm:p-12">
+              <h1 className="text-4xl sm:text-5xl font-bold text-white mb-2">
                 {election.title}
               </h1>
             </div>
           )}
 
           {/* Description Section */}
-          <div className="p-8">
+          <div className="p-4 sm:p-8">
             <div className="flex items-start gap-3 mb-8">
               <Info className="w-6 h-6 text-blue-600 mt-1 flex-shrink-0" />
               <p className="text-gray-700 text-lg leading-relaxed">
@@ -142,12 +140,12 @@ function ElectionDetailsPage() {
         </div>
 
         {/* Candidates Section */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-8">
           <div className="flex items-center gap-3 mb-6">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-lg">
               <Users className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-800">Candidates</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Candidates</h2>
           </div>
 
           {election.candidates && election.candidates.length > 0 ? (
@@ -204,7 +202,7 @@ function ElectionDetailsPage() {
                   <button
                     onClick={() => castVote(id, selectedCandidate._id)}
                     disabled={!isElectionActive()}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r cursor-pointer from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >
                     {isElectionActive() ? `Cast Your Vote for ${selectedCandidate.name}` : 'Voting is not open'}
                   </button>

@@ -30,21 +30,21 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-black py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-lg md:max-w-2xl mx-auto">
         <div className="bg-white dark:bg-gray-800/50 rounded-2xl shadow-2xl backdrop-blur-lg border border-white/10 overflow-hidden">
-          <div className="p-8">
+          <div className="p-6 sm:p-8">
             <div className="flex flex-col items-center text-center">
               <div className="relative mb-4">
                 <img
                   src={user.avatar}
                   alt={user.username}
-                  className="h-32 w-32 rounded-full object-cover shadow-lg border-4 border-blue-500"
+                  className="h-24 w-24 sm:h-32 sm:w-32 rounded-full object-cover shadow-lg border-4 border-blue-500"
                 />
                 <div className="absolute bottom-0 right-0 bg-green-500 rounded-full p-1.5 border-2 border-white dark:border-gray-800">
                   <ShieldCheck className="h-4 w-4 text-white" />
                 </div>
               </div>
-              <h1 className="text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
+              <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
                 {user.username}
               </h1>
               <p className="text-lg text-gray-500 dark:text-gray-400 mt-1">

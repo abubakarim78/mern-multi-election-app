@@ -29,15 +29,15 @@ function ResultsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 sm:py-12">
       <div className="container mx-auto px-4 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
             <Trophy className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-5xl font-bold text-gray-900 mb-2">Election Results</h1>
-          <p className="text-gray-600 text-lg">Voting statistics and outcomes</p>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-2">Election Results</h1>
+          <p className="text-base sm:text-lg text-gray-600">Voting statistics and outcomes</p>
         </div>
 
         {loading ? (
@@ -63,9 +63,9 @@ function ResultsPage() {
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   {/* Election Header */}
-                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
-                    <h2 className="text-3xl font-bold mb-2">{election.title}</h2>
-                    <div className="flex items-center gap-6 text-blue-100">
+                  <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 sm:p-6 text-white">
+                    <h2 className="text-2xl sm:text-3xl font-bold mb-2">{election.title}</h2>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-6 text-blue-100">
                       <div className="flex items-center gap-2">
                         <Users className="w-5 h-5" />
                         <span className="font-medium">{election.candidates?.length || 0} Candidates</span>
@@ -79,12 +79,12 @@ function ResultsPage() {
 
                   {/* Winner Banner */}
                   {isEnded && election.winner && totalVotes > 0 && (
-                    <div className="bg-gradient-to-r from-green-50 to-teal-50 border-b border-green-200 p-4">
+                    <div className="bg-gradient-to-r from-green-50 to-teal-50 border-b border-green-200 p-3 sm:p-4">
                       <div className="flex items-center justify-center gap-3">
                         <Trophy className="w-6 h-6 text-green-600" />
-                        <span className="text-lg font-semibold text-gray-800">
+                        <span className="text-base sm:text-lg font-semibold text-gray-800 text-center">
                           Winner: <span className="text-green-700">{election.winner.name}</span> with {election.winner.votes} votes
-                          <span className="text-gray-600 ml-2">
+                          <span className="text-gray-600 ml-2 hidden sm:inline">
                             ({((election.winner.votes / totalVotes) * 100).toFixed(1)}%)
                           </span>
                         </span>
@@ -94,10 +94,10 @@ function ResultsPage() {
 
                   {/* Leading Candidate Banner */}
                   {!isEnded && totalVotes > 0 && (
-                     <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border-b border-yellow-200 p-4">
+                     <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border-b border-yellow-200 p-3 sm:p-4">
                        <div className="flex items-center justify-center gap-3">
                          <Trophy className="w-6 h-6 text-yellow-600" />
-                         <span className="text-lg font-semibold text-gray-800">
+                         <span className="text-base sm:text-lg font-semibold text-gray-800">
                            Leading: <span className="text-yellow-700">{election.candidates.reduce((p, c) => p.votes > c.votes ? p : c).name}</span>
                          </span>
                        </div>
@@ -105,17 +105,17 @@ function ResultsPage() {
                   )}
 
                   {/* Chart Section */}
-                  <div className="p-6">
-                    <ResponsiveContainer width="100%" height={350}>
-                      <BarChart data={election.candidates} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <div className="p-2 sm:p-6">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={election.candidates} margin={{ top: 20, right: 10, left: -10, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                         <XAxis 
                           dataKey="name" 
-                          tick={{ fill: '#6b7280', fontSize: 14 }}
+                          tick={{ fill: '#6b7280', fontSize: 12 }}
                           axisLine={{ stroke: '#d1d5db' }}
                         />
                         <YAxis 
-                          tick={{ fill: '#6b7280', fontSize: 14 }}
+                          tick={{ fill: '#6b7280', fontSize: 12 }}
                           axisLine={{ stroke: '#d1d5db' }}
                         />
                         <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }} />
@@ -137,7 +137,7 @@ function ResultsPage() {
                   </div>
 
                   {/* Candidate Details */}
-                  <div className="px-6 pb-6">
+                  <div className="px-4 sm:px-6 pb-4 sm:pb-6">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4">Detailed Breakdown</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {election.candidates

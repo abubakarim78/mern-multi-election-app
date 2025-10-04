@@ -4,22 +4,22 @@ import { Link, useLocation } from "react-router-dom";
 import useAuthStore from "@/store/useAuthStore";
 import LoginModal from "./modals/LoginModal";
 import SignupModal from "./modals/SignupModal";
-import ThemeSwitch from "./ThemeSwitch";
-import ThemeContext from "@/context/ThemeContext";
+import VerifyOtpModal from "./modals/VerifyOtpModal";
 
 const menuItems = [
   { name: "Elections", link: "/elections", icon: Vote },
   { name: "Results", link: "/results", icon: BarChart3 },
-  { name: "Users", link: "/users", icon: Users },
+  // { name: "Users", link: "/users", icon: Users },
 ];
 
 function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [signupModalOpen, setSignupModalOpen] = useState(false);
+  const [verifyOtpModalOpen, setVerifyOtpModalOpen] = useState(false);
+  const [emailForOtp, setEmailForOtp] = useState("");
   const location = useLocation();
   const user = useAuthStore((state) => state.user);
-  const { theme, toggleTheme } = useContext(ThemeContext);
 
   const handleLogout = () => {
     useAuthStore.getState().logout();
@@ -27,6 +27,12 @@ function Header() {
 
   const isActiveLink = (path) => {
     return location.pathname === path;
+  };
+
+  const handleSignupSuccess = (email) => {
+    setSignupModalOpen(false);
+    setEmailForOtp(email);
+    setVerifyOtpModalOpen(true);
   };
 
   return (
@@ -72,13 +78,12 @@ function Header() {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-4">
-            <ThemeSwitch />
             {user ? (
               <div className="flex items-center space-x-4">
                 <span className="text-white font-medium">Welcome, {user.username}</span>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-lg font-medium text-white bg-red-500 hover:bg-red-600 transition-colors duration-200"
+                  className="flex items-center space-x-2 px-3 py-2 cursor-pointer rounded-lg font-medium text-white bg-red-500 hover:bg-red-600 transition-colors duration-200"
                 >
                   <LogOut className="h-5 w-5" />
                   <span>Logout</span>
@@ -88,13 +93,13 @@ function Header() {
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setLoginModalOpen(true)}
-                  className="px-4 py-2 rounded-lg font-medium text-white hover:bg-white/10 transition-colors duration-200"
+                  className="px-4 py-2 cursor-pointer rounded-lg font-medium text-white hover:bg-white/10 transition-colors duration-200"
                 >
                   Login
                 </button>
                 <button
                   onClick={() => setSignupModalOpen(true)}
-                  className="px-4 py-2 rounded-lg font-medium text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200"
+                  className="px-4 py-2 cursor-pointer rounded-lg font-medium text-white bg-blue-500 hover:bg-blue-600 transition-colors duration-200"
                 >
                   Sign Up
                 </button>
@@ -104,7 +109,6 @@ function Header() {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-3">
-            <ThemeSwitch />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-blue-100 hover:text-white hover:bg-white/10 transition-all duration-200"
@@ -186,7 +190,8 @@ function Header() {
           </div>
         </div>
         <LoginModal loginModal={loginModalOpen} setLoginModal={setLoginModalOpen} setSignupModal={setSignupModalOpen} />
-        <SignupModal signupModal={signupModalOpen} setSignupModal={setSignupModalOpen} setLoginModal={setLoginModalOpen} />
+        <SignupModal signupModal={signupModalOpen} setSignupModal={setSignupModalOpen} setLoginModal={setLoginModalOpen} onSignupSuccess={handleSignupSuccess} />
+        <VerifyOtpModal isOpen={verifyOtpModalOpen} onClose={() => setVerifyOtpModalOpen(false)} email={emailForOtp} />
       </div>
     </header>
   );

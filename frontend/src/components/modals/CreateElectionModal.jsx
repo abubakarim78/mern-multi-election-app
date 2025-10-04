@@ -67,9 +67,9 @@ function CreateElectionModal({
       }
     });
     
-    const success = await createElection(data);
+    const createdElection = await createElection(data);
 
-    if (success) {
+    if (createdElection) {
       setNewElectionModalOpen(false);
       setFormData({
         title: "",
@@ -79,6 +79,7 @@ function CreateElectionModal({
         image: null,
       });
       setCandidates([{ name: "", party: "", motto: "", avatar: null }]);
+      toast.success(`Election created successfully! Pincode: ${createdElection.pincode}`);
     }
   };
 
@@ -103,7 +104,7 @@ function CreateElectionModal({
                 type="text"
                 name="title"
                 placeholder="e.g., Student Council Presidential Election"
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
                 onChange={handleChange}
                 value={formData.title}
                 required
@@ -118,7 +119,7 @@ function CreateElectionModal({
                 name="description"
                 placeholder="Describe the purpose and scope of this election..."
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 resize-none bg-white/80 backdrop-blur-sm"
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 resize-none bg-white/80 backdrop-blur-sm"
                 onChange={handleChange}
                 value={formData.description}
                 required
@@ -133,7 +134,7 @@ function CreateElectionModal({
                 <input
                   type="date"
                   name="startDate"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
                   onChange={handleChange}
                   value={formData.startDate}
                   required
@@ -147,7 +148,7 @@ function CreateElectionModal({
                 <input
                   type="date"
                   name="endDate"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
                   onChange={handleChange}
                   value={formData.endDate}
                   required
@@ -167,7 +168,7 @@ function CreateElectionModal({
                       type="text"
                       name="name"
                       placeholder="Candidate Name"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
                       value={candidate.name}
                       onChange={(e) => handleCandidateChange(index, e)}
                       required
@@ -176,7 +177,7 @@ function CreateElectionModal({
                       type="text"
                       name="party"
                       placeholder="Candidate Party"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
                       value={candidate.party}
                       onChange={(e) => handleCandidateChange(index, e)}
                       required
@@ -195,7 +196,7 @@ function CreateElectionModal({
                     type="text"
                     name="motto"
                     placeholder="Candidate Motto"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm"
                     value={candidate.motto}
                     onChange={(e) => handleCandidateChange(index, e)}
                   />
@@ -203,7 +204,7 @@ function CreateElectionModal({
                     type="file"
                     name="avatar"
                     accept="image/*"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
                     onChange={(e) => handleCandidateChange(index, e)}
                   />
                 </div>
@@ -227,7 +228,7 @@ function CreateElectionModal({
                   type="file"
                   name="image"
                   accept="image/*"
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 bg-white/80 backdrop-blur-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100"
                   onChange={(e) =>
                     setFormData((prev) => ({ ...prev, image: e.target.files[0] }))
                   }

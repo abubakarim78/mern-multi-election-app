@@ -56,6 +56,10 @@ const electionSchema = new mongoose.Schema(
         ref: "User",
       },
     ],
+    pincode: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

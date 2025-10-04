@@ -25,6 +25,19 @@ const useElectionStore = create((set) => ({
     }
   },
 
+  verifyPincode: async (electionId, pincode) => {
+    set({ error: null });
+    try {
+      const response = await api.post(`/elections/${electionId}/verify`, { pincode });
+      return response.data.success;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Pincode verification failed";
+      set({ error: errorMessage });
+      toast.error(errorMessage);
+      return false;
+    }
+  },
+
   createElection: async (formData) => {
     set({ isCreatingElection: true });
 
@@ -41,7 +54,7 @@ const useElectionStore = create((set) => ({
       }));
 
       toast.success("Election created successfully!");
-      return true;
+      return response.data; // Return the created election object
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to create election");
       set({ isCreatingElection: false });

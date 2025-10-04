@@ -1,5 +1,6 @@
 import React from "react";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import ElectionsPage from "./pages/ElectionsPage";
@@ -20,6 +21,7 @@ function App() {
         <Route path="/results" element={<ResultsPage />} />
         <Route path="/profile" element={<ProfilePage />} />
       </Routes>
+      <Footer />
     </div>
   );
 }
