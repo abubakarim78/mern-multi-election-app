@@ -12,29 +12,28 @@ import { FaGithub } from "react-icons/fa";
 import useAuthStore from "@/store/useAuthStore";
 import { Loader2, Eye, EyeOff, UserPlus } from "lucide-react";
 
-function SignupModal({ signupModal, setSignupModal, setLoginModal }) {
+function SignupModal({ signupModal, setSignupModal, setLoginModal, onSignupSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const { signup, isSigningUp } = useAuthStore();
   const [newUserData, setNewUserData] = useState({
-    name: "",
+    username: "",
     email: "",
-    phone: "",
     password: "",
+    role: "voter",
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const isSuccess = await signup(newUserData);
-    if (isSuccess) {
+    const user = await signup(newUserData);
+    if (user) {
       setNewUserData({
-        name: "",
+        username: "",
         email: "",
-        phone: "",
         password: "",
+        role: "voter",
       });
-      setSignupModal(false);
-      setLoginModal(true);
+      onSignupSuccess(user.email);
     }
   };
 
@@ -44,7 +43,7 @@ function SignupModal({ signupModal, setSignupModal, setLoginModal }) {
 
   return (
     <Dialog open={signupModal} onOpenChange={setSignupModal}>
-      <DialogContent className="max-w-xl max-h-[90vh]">
+      <DialogContent className="max-w-xl max-h-[90vh] bg-gray-200 overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center text-blue-950 bg-gradient-to-r from-blue-800 to-blue-950 bg-clip-text text-transparent text-3xl font-semibold mb-1">
             Create Account{" "}
@@ -58,55 +57,37 @@ function SignupModal({ signupModal, setSignupModal, setLoginModal }) {
         <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-xl border border-white/50 p-4 md:p-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative-group">
-              <label htmlFor="name" className="block text-sm font-semibold ml-1 mb-3 text-gray-700">
-                Full Name
+              <label htmlFor="username" className="block text-sm font-semibold ml-1 mb-3 text-gray-700">
+                Username
               </label>
               <input
                 type="text"
-                id="name"
-                placeholder="Enter your full name"
+                id="username"
+                placeholder="Enter your username"
                 className="border border-gray-700 py-2 px-2 rounded-lg text-lg focus:outline-blue-800 focus:border-blue-900 w-full"
                 required
-                value={newUserData.name}
+                value={newUserData.username}
                 onChange={(e) =>
-                  setNewUserData({ ...newUserData, name: e.target.value })
+                  setNewUserData({ ...newUserData, username: e.target.value })
                 }
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="relative-group">
-                <label htmlFor="email" className="block text-sm font-semibold mb-3 text-gray-700">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  placeholder="Enter your email"
-                  className="w-full border border-gray-700 py-2 px-4 rounded-lg text-lg focus:outline-blue-800 focus:border-blue-900"
-                  required
-                  value={newUserData.email}
-                  onChange={(e) =>
-                    setNewUserData({ ...newUserData, email: e.target.value })
-                  }
-                />
-              </div>
-
-              <div className="relative-group">
-                <label htmlFor="phone" className="block text-sm font-semibold mb-3 text-gray-700">
-                  Phone (Optional)
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  placeholder="Enter your phone number"
-                  className="w-full border border-gray-700 py-2 px-4 rounded-lg text-lg focus:outline-blue-800 focus:border-blue-900"
-                  value={newUserData.phone}
-                  onChange={(e) =>
-                    setNewUserData({ ...newUserData, phone: e.target.value })
-                  }
-                />
-              </div>
+            <div className="relative-group">
+              <label htmlFor="email" className="block text-sm font-semibold mb-3 text-gray-700">
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                className="w-full border border-gray-700 py-2 px-4 rounded-lg text-lg focus:outline-blue-800 focus:border-blue-900"
+                required
+                value={newUserData.email}
+                onChange={(e) =>
+                  setNewUserData({ ...newUserData, email: e.target.value })
+                }
+              />
             </div>
 
             <div className="flex flex-col">
@@ -133,6 +114,21 @@ function SignupModal({ signupModal, setSignupModal, setLoginModal }) {
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+            </div>
+
+            <div className="relative-group">
+              <label htmlFor="role" className="block text-sm font-semibold mb-3 text-gray-700">
+                Role
+              </label>
+              <select
+                id="role"
+                className="w-full border border-gray-700 py-2 px-4 rounded-lg text-lg focus:outline-blue-800 focus:border-blue-900"
+                required
+                value={newUserData.role}
+                readOnly
+              >
+                <option value="voter">Voter</option>
+              </select>
             </div>
 
             <button

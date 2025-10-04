@@ -25,6 +25,16 @@ const userSchema = new mongoose.Schema(
       enum: ["voter", "Election Official"],
       default: "voter",
     },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+    },
+    otpExpires: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

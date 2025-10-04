@@ -3,6 +3,7 @@ import { Plus, Search, MonitorPlay } from "lucide-react";
 import ElectionCard from "../components/ElectionCard";
 import CreateElectionModal from "@/components/modals/CreateElectionModal";
 import UpdateElectionModal from "@/components/modals/UpdateElectionModal";
+import PincodeModal from "@/components/modals/PincodeModal";
 import useElectionStore from "@/store/useElectionStore";
 import useAuthStore from "@/store/useAuthStore";
 
@@ -17,6 +18,8 @@ function ElectionsPage() {
   const [newElectionModalOpen, setNewElectionModalOpen] = useState(false);
   const [updateElectionModalOpen, setUpdateElectionModalOpen] = useState(false);
   const [electionToUpdate, setElectionToUpdate] = useState(null);
+  const [pincodeModalOpen, setPincodeModalOpen] = useState(false);
+  const [electionIdForPincode, setElectionIdForPincode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
@@ -52,6 +55,11 @@ function ElectionsPage() {
     setUpdateElectionModalOpen(true);
   };
 
+  const handleViewDetailsClick = (electionId) => {
+    setElectionIdForPincode(electionId);
+    setPincodeModalOpen(true);
+  };
+
   const getStatusCounts = () => {
     const counts = { all: elections.length, active: 0, upcoming: 0, ended: 0 };
     elections.forEach((election) => {
@@ -64,7 +72,7 @@ function ElectionsPage() {
   const statusCounts = getStatusCounts();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30 text-gray-900 dark:from-gray-900 dark:to-blue-900/20 dark:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-white text-gray-900 dark:from-gray-900 dark:to-blue-900/20 dark:text-white transition-colors duration-300">
       <div className="w-full">
         {/* Hero Section */}
         <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white">
@@ -94,7 +102,7 @@ function ElectionsPage() {
 
         {/* Controls Section */}
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+          <div className="bg-gradient-to-r from-blue-300 via-blue-400 to-indigo-500 rounded-2xl shadow-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
             <div className="flex flex-col lg:flex-row gap-6">
               {/* Search Bar */}
               <div className="flex-1 relative">
@@ -106,12 +114,12 @@ function ElectionsPage() {
                   placeholder="Search elections..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 dark:text-white transition-all duration-200"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-200 dark:text-black transition-all duration-200"
                 />
               </div>
 
               {/* Filter Buttons */}
-              <div className="flex gap-2 bg-gray-100 dark:bg-gray-700 p-1 rounded-xl">
+              <div className="flex gap-2 bg-gray-100 dark:bg-gray-200 p-1 rounded-xl">
                 {[
                   { key: "all", label: "All", count: statusCounts.all },
                   { key: "active", label: "Active", count: statusCounts.active },
@@ -128,7 +136,7 @@ function ElectionsPage() {
                     className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 ${
                       filterStatus === key
                         ? "bg-blue-600 text-white shadow-md"
-                        : "text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                        : "text-gray-600 dark:text-gray-900 hover:bg-gray-200 cursor-pointer dark:hover:bg-gray-300"
                     }`}
                   >
                     {label}
@@ -154,7 +162,7 @@ function ElectionsPage() {
             ) : filteredElections.length > 0 ? (
               <>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-800">
                     {filterStatus === "all"
                       ? "All Elections"
                       : filterStatus === "active"
@@ -163,18 +171,19 @@ function ElectionsPage() {
                       ? "Upcoming Elections"
                       : "Ended Elections"}
                   </h2>
-                  <p className="text-gray-600 dark:text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-800">
                     {filteredElections.length} election
                     {filteredElections.length !== 1 ? "s" : ""} found
                   </p>
                 </div>
 
-                <div className="grid grid-col-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredElections.map((election) => (
                     <ElectionCard
                       key={election._id}
                       election={election}
                       onEdit={handleEditElection}
+                      onViewDetailsClick={handleViewDetailsClick}
                       bannerUrl={getElectionImageUrl(election._id)}
                     />
                   ))}
@@ -222,6 +231,11 @@ function ElectionsPage() {
           electionToUpdate={electionToUpdate}
         />
       )}
+      <PincodeModal
+        isOpen={pincodeModalOpen}
+        onClose={() => setPincodeModalOpen(false)}
+        electionId={electionIdForPincode}
+      />
     </div>
   );
 }

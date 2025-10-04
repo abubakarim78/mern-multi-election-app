@@ -4,7 +4,7 @@ import useAuthStore from "@/store/useAuthStore";
 import useElectionStore from "@/store/useElectionStore";
 import { Calendar, Edit, Trash2, Eye } from "lucide-react";
 
-function ElectionCard({ election, onEdit, bannerUrl }) {
+function ElectionCard({ election, onEdit, bannerUrl, onViewDetailsClick }) {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { deleteElection } = useElectionStore();
@@ -103,7 +103,7 @@ function ElectionCard({ election, onEdit, bannerUrl }) {
         {/* Action Buttons */}
         <div className="border-t border-gray-100 pt-4 flex items-center justify-between gap-3">
           <button 
-            onClick={() => navigate(`/elections/${election._id}`)}
+            onClick={() => onViewDetailsClick(election._id)}
             className="px-5 py-2.5 bg-blue-600 cursor-pointer hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-200 hover:shadow-md active:scale-95 flex items-center gap-2 text-sm"
           >
             <Eye className="w-4 h-4" />

@@ -30,12 +30,15 @@ export const createElection = async (req, res) => {
       });
     }
 
+    const pincode = Math.floor(100000 + Math.random() * 900000).toString();
+
     const electionData = {
       title,
       description,
       startDate,
       endDate,
       candidates: parsedCandidates,
+      pincode,
     };
 
     // Handle image if uploaded
@@ -67,7 +70,7 @@ export const createElection = async (req, res) => {
 
 export const getElections = async (req, res) => {
   try {
-    const elections = await Election.find();
+    const elections = await Election.find().select('-pincode');
     res.status(200).json(elections);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
@@ -77,7 +80,7 @@ export const getElections = async (req, res) => {
 export const getElectionById = async (req, res) => {
   try {
     const { id } = req.params;
-    const election = await Election.findById(id);
+    const election = await Election.findById(id).select('-pincode');
     if (!election) {
       return res.status(404).json({ message: "Election not found" });
     }
@@ -92,6 +95,27 @@ export const getElectionById = async (req, res) => {
     }
 
     res.status(200).json(electionObject);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+export const verifyPincode = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { pincode } = req.body;
+
+    const election = await Election.findById(id);
+
+    if (!election) {
+      return res.status(404).json({ message: "Election not found" });
+    }
+
+    if (election.pincode !== pincode) {
+      return res.status(401).json({ message: "Invalid pincode" });
+    }
+
+    res.status(200).json({ success: true });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }

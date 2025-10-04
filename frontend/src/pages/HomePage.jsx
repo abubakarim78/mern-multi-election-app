@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import useElectionStore from "@/store/useElectionStore";
 import ElectionCard from "@/components/ElectionCard";
 import UpdateElectionModal from "@/components/modals/UpdateElectionModal";
+import PincodeModal from "@/components/modals/PincodeModal";
 import { Link } from "react-router-dom";
 import { Vote, Shield, Users, TrendingUp } from "lucide-react";
 
@@ -9,6 +10,8 @@ function HomePage() {
   const { elections, fetchElections, loading } = useElectionStore();
   const [updateElectionModalOpen, setUpdateElectionModalOpen] = useState(false);
   const [electionToUpdate, setElectionToUpdate] = useState(null);
+  const [pincodeModalOpen, setPincodeModalOpen] = useState(false);
+  const [electionIdForPincode, setElectionIdForPincode] = useState(null);
 
   useEffect(() => {
     fetchElections();
@@ -19,9 +22,13 @@ function HomePage() {
     setUpdateElectionModalOpen(true);
   };
 
+  const handleViewDetailsClick = (electionId) => {
+    setElectionIdForPincode(electionId);
+    setPincodeModalOpen(true);
+  };
+
   const features = [
-    {
-      icon: Shield,
+    { icon: Shield,
       title: "Secure Voting",
       description: "End-to-end encryption ensures your vote remains private and secure"
     },
@@ -48,10 +55,10 @@ function HomePage() {
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto px-4 py-16 md:py-24">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 leading-tight">
               Democracy Made Simple
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-blue-100">
+            <p className="text-lg sm:text-xl md:text-2xl mb-8 text-blue-100">
               Secure, transparent, and accessible voting for everyone. Join thousands making their voices heard.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -72,14 +79,14 @@ function HomePage() {
       </div>
 
       {/* Features Section */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
               <div
                 key={index}
-                className="text-center p-6 rounded-xl bg-white shadow-sm hover:shadow-md transition-shadow"
+                className="text-center p-6 rounded-xl bg-white/50 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
                   <Icon className="w-8 h-8 text-blue-600" />
@@ -97,7 +104,7 @@ function HomePage() {
       </div>
 
       {/* Active Elections Section */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
             Active Elections
@@ -122,6 +129,7 @@ function HomePage() {
                   key={election._id}
                   election={election}
                   onEdit={handleEditElection}
+                  onViewDetailsClick={handleViewDetailsClick}
                   bannerUrl={useElectionStore.getState().getElectionImageUrl(election._id)}
                 />
               ))}
@@ -151,12 +159,12 @@ function HomePage() {
 
       {/* Call to Action Section */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-        <div className="container mx-auto px-4 py-16">
+        <div className="container mx-auto px-4 py-12 md:py-16">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Ready to Make Your Voice Heard?
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
+            <p className="text-lg md:text-xl text-blue-100 mb-8">
               Join Multi-Elect today and participate in secure, transparent elections
             </p>
             <Link
@@ -167,6 +175,7 @@ function HomePage() {
             </Link>
           </div>
         </div>
+      </div>
       {electionToUpdate && (
         <UpdateElectionModal
           updateElectionModalOpen={updateElectionModalOpen}
@@ -174,7 +183,11 @@ function HomePage() {
           electionToUpdate={electionToUpdate}
         />
       )}
-    </div>
+      <PincodeModal
+        isOpen={pincodeModalOpen}
+        onClose={() => setPincodeModalOpen(false)}
+        electionId={electionIdForPincode}
+      />
     </div>
   );
 }

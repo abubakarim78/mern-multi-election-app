@@ -34,7 +34,7 @@ function LoginModal({ loginModal, setLoginModal, setSignupModal }) {
 
   return (
     <Dialog open={loginModal} onOpenChange={setLoginModal}>
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto bg-gray-200">
         <DialogHeader>
           <DialogTitle className="text-center text-blue-950 bg-gradient-to-r from-blue-800 to-blue-950 bg-clip-text text-transparent text-3xl font-semibold mb-1">
             Welcome Back{" "}

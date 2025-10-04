@@ -8,9 +8,10 @@ import {
   deleteElection,
   getElectionImage,
   getElectionResults,
-  castVote
+  castVote,
+  verifyPincode
 } from '../controllers/election.controllers.js';
-import { protect, isElectionOfficial } from '../middleware/auth.middleware.js';
+import { authenticate, isElectionOfficial } from '../middleware/auth.middleware.js';
 
 const electionRouter = express.Router();
 
@@ -34,7 +35,7 @@ const uploadFields = upload.fields([
 ]);
 
 // Route to create a new election (with file upload)
-electionRouter.post('/', protect, isElectionOfficial, uploadFields, createElection);
+electionRouter.post('/', authenticate, isElectionOfficial, uploadFields, createElection);
 
 // Route to get all elections
 electionRouter.get('/', getElections);
@@ -45,16 +46,19 @@ electionRouter.get('/results', getElectionResults);
 // Route to get a specific election by ID
 electionRouter.get('/:id', getElectionById);
 
+// Route to verify pincode for an election
+electionRouter.post('/:id/verify', authenticate, verifyPincode);
+
 // Route to get election image by ID
 electionRouter.get('/:id/image', getElectionImage);
 
 // Route to update an existing election by ID (with file upload)
-electionRouter.put('/:id', protect, isElectionOfficial, upload.single('bannerImage'), updateElection);
+electionRouter.put('/:id', authenticate, isElectionOfficial, upload.single('bannerImage'), updateElection);
 
 // Route to delete an election by ID
-electionRouter.delete('/:id', protect, isElectionOfficial, deleteElection);
+electionRouter.delete('/:id', authenticate, isElectionOfficial, deleteElection);
 
 // Route to cast a vote in an election
-electionRouter.post('/:id/vote', protect, castVote);
+electionRouter.post('/:id/vote', authenticate, castVote);
 
 export default electionRouter;

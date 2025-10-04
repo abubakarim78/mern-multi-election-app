@@ -10,21 +10,40 @@ const useAuthStore = create(
       token: null,
       isLoggingIn: false,
       isSigningUp: false,
+      isVerifyingOtp: false,
       error: null,
 
       signup: async (formData) => {
         set({ isSigningUp: true, error: null });
         try {
           const response = await axios.post("/auth/signup", formData);
-          const { token, ...user } = response.data;
-          set({ user, token, isSigningUp: false });
-          toast.success("Signup successful!");
-          return true;
+          toast.success(response.data.message);
+          set({ isSigningUp: false });
+          return response.data.user; // Return user object with email
         } catch (error) {
           const errorMessage = error.response?.data?.message || "Signup failed";
           set({
             error: errorMessage,
             isSigningUp: false,
+          });
+          toast.error(errorMessage);
+          return null;
+        }
+      },
+
+      verifyOtp: async (data) => {
+        set({ isVerifyingOtp: true, error: null });
+        try {
+          const response = await axios.post("/auth/verify-otp", data);
+          const { user, token } = response.data;
+          set({ user, token, isVerifyingOtp: false });
+          toast.success("Account verified successfully!");
+          return true;
+        } catch (error) {
+          const errorMessage = error.response?.data?.message || "OTP verification failed";
+          set({
+            error: errorMessage,
+            isVerifyingOtp: false,
           });
           toast.error(errorMessage);
           return false;
@@ -57,6 +76,7 @@ const useAuthStore = create(
     }),
     {
       name: "auth-storage",
+      partialize: (state) => ({ user: state.user, token: state.token }),
     }
   )
 );
