@@ -2,9 +2,10 @@ import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
+    service: 'gmail',
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
-    secure: false, // true for 465, false for other ports
+    secure: true,
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
@@ -13,12 +14,18 @@ const sendEmail = async (options) => {
 
   const mailOptions = {
     from: `Multi-Elect <${process.env.EMAIL_USER}>`,
-    to: options.email,
+    to: options.to,
     subject: options.subject,
+    text: options.text,
     html: options.html,
   };
 
-  await transporter.sendMail(mailOptions);
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw error;
+  }
 };
 
 export default sendEmail;

@@ -50,6 +50,11 @@ const electionSchema = new mongoose.Schema(
         },
       },
     ],
+    voterRegistry: [
+      {
+        type: String,
+      },
+    ],
     voters: [
       {
         type: mongoose.Schema.Types.ObjectId,

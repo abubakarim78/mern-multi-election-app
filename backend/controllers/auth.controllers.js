@@ -43,7 +43,7 @@ export const signup = async (req, res) => {
 
     try {
       await sendEmail({
-        email: user.email,
+        to: user.email,
         subject: 'Your OTP for Multi-Elect Verification',
         html: `<p>Your OTP is: <strong>${otp}</strong></p><p>It will expire in 10 minutes.</p>`,
       });

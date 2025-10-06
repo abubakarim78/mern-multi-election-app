@@ -42,7 +42,7 @@ function PincodeModal({ isOpen, onClose, electionId }) {
               Pincode
             </label>
             <input
-              type="password"
+              type="text"
               id="pincode"
               value={pincode}
               onChange={(e) => setPincode(e.target.value)}

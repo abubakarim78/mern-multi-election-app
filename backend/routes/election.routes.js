@@ -9,7 +9,8 @@ import {
   getElectionImage,
   getElectionResults,
   castVote,
-  verifyPincode
+  verifyPincode,
+  requestPincode
 } from '../controllers/election.controllers.js';
 import { authenticate, isElectionOfficial } from '../middleware/auth.middleware.js';
 
@@ -48,6 +49,9 @@ electionRouter.get('/:id', getElectionById);
 
 // Route to verify pincode for an election
 electionRouter.post('/:id/verify', authenticate, verifyPincode);
+
+// Route to request pincode for an election
+electionRouter.post('/:id/request-pincode', authenticate, requestPincode);
 
 // Route to get election image by ID
 electionRouter.get('/:id/image', getElectionImage);

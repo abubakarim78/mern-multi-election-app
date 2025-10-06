@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import useElectionStore from '@/store/useElectionStore';
 import useAuthStore from '@/store/useAuthStore';
 import { format } from 'date-fns';
@@ -11,6 +11,7 @@ function ElectionDetailsPage() {
   const { user } = useAuthStore();
   const [election, setElection] = useState(null);
   const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const navigate = useNavigate();
 
   const imageUrl = useMemo(() => {
     return getElectionImageUrl(id);
@@ -27,6 +28,15 @@ function ElectionDetailsPage() {
       setElection(currentElection);
     }
   }, [currentElection, id]);
+
+  const handleCastVote = async () => {
+    if (selectedCandidate) {
+      const success = await castVote(id, selectedCandidate._id);
+      if (success) {
+        navigate('/results');
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -174,8 +184,7 @@ function ElectionDetailsPage() {
                     </div>
                     {candidate.motto && (
                       <p className="text-gray-500 italic text-sm ml-13 mb-2">({candidate.motto})</p>
-                    )}
-                    <p className="text-gray-600 font-medium ml-13 bg-white px-3 py-1 rounded-full inline-block text-sm">
+                    )}                    <p className="text-gray-600 font-medium ml-13 bg-white px-3 py-1 rounded-full inline-block text-sm">
                       {candidate.party}
                     </p>
                     {user && (
@@ -200,7 +209,7 @@ function ElectionDetailsPage() {
               {user && selectedCandidate && (
                 <div className="mt-8 text-center">
                   <button
-                    onClick={() => castVote(id, selectedCandidate._id)}
+                    onClick={handleCastVote}
                     disabled={!isElectionActive()}
                     className="bg-gradient-to-r cursor-pointer from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
                   >

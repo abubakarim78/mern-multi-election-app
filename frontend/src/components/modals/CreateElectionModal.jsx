@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import useElectionStore from "@/store/useElectionStore";
+import { Copy, Check } from "lucide-react";
+import toast from "react-hot-toast";
 
 function CreateElectionModal({
   newElectionModalOpen,
@@ -13,8 +15,11 @@ function CreateElectionModal({
     startDate: "",
     endDate: "",
     image: null,
+    voterEmails: "",
   });
   const [candidates, setCandidates] = useState([{ name: "", party: "", motto: "", avatar: null }]);
+  const [generatedPincode, setGeneratedPincode] = useState(null);
+  const [copied, setCopied] = useState(false);
 
   const handleCandidateChange = (index, e) => {
     const { name, value, files } = e.target;
@@ -50,6 +55,7 @@ function CreateElectionModal({
     data.append("description", formData.description);
     data.append("startDate", formData.startDate);
     data.append("endDate", formData.endDate);
+    data.append("voterEmails", formData.voterEmails);
     if (formData.image) {
       data.append("image", formData.image);
     }
@@ -70,18 +76,70 @@ function CreateElectionModal({
     const createdElection = await createElection(data);
 
     if (createdElection) {
-      setNewElectionModalOpen(false);
       setFormData({
         title: "",
         description: "",
         startDate: "",
         endDate: "",
         image: null,
+        voterEmails: "",
       });
       setCandidates([{ name: "", party: "", motto: "", avatar: null }]);
-      toast.success(`Election created successfully! Pincode: ${createdElection.pincode}`);
+      setGeneratedPincode(createdElection.pincode);
     }
   };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(generatedPincode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const closePincodeModal = () => {
+    setGeneratedPincode(null);
+    setNewElectionModalOpen(false);
+  };
+
+  if (generatedPincode) {
+    return (
+      <Dialog open={true} onOpenChange={closePincodeModal}>
+        <DialogContent className="bg-white border-0 shadow-xl sm:max-w-md">
+          <DialogHeader className="space-y-3">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+              <Check className="h-6 w-6 text-green-600" />
+            </div>
+            <h2 className="text-center text-2xl font-bold text-gray-900">
+              Election Created!
+            </h2>
+            <p className="text-center text-sm text-gray-600">
+              Here is your election pincode. Please save it securely.
+            </p>
+          </DialogHeader>
+          <div className="mt-4">
+            <div className="relative rounded-lg bg-gray-100 p-4">
+              <p className="text-center font-mono text-lg tracking-widest text-gray-800">
+                {generatedPincode}
+              </p>
+              <button
+                onClick={handleCopy}
+                className="absolute top-1/2 right-3 -translate-y-1/2 rounded-md p-2 text-gray-500 hover:bg-gray-200"
+              >
+                {copied ? <Check className="h-5 w-5 text-green-600" /> : <Copy className="h-5 w-5" />}
+              </button>
+            </div>
+          </div>
+          <div className="mt-6">
+            <button
+              onClick={closePincodeModal}
+              className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-indigo-700"
+            >
+              Done
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={newElectionModalOpen} onOpenChange={setNewElectionModalOpen}>
@@ -154,6 +212,20 @@ function CreateElectionModal({
                   required
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700">
+                Voter Emails (comma-separated)
+              </label>
+              <textarea
+                name="voterEmails"
+                placeholder="e.g., voter1@example.com, voter2@example.com"
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-200 rounded-xl transition-all duration-200 hover:border-gray-300 resize-none bg-white/80 backdrop-blur-sm"
+                onChange={handleChange}
+                value={formData.voterEmails}
+              />
             </div>
 
             {/* Candidates */}

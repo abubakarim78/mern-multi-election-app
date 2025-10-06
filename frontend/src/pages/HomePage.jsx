@@ -5,6 +5,7 @@ import UpdateElectionModal from "@/components/modals/UpdateElectionModal";
 import PincodeModal from "@/components/modals/PincodeModal";
 import { Link } from "react-router-dom";
 import { Vote, Shield, Users, TrendingUp } from "lucide-react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 function HomePage() {
   const { elections, fetchElections, loading } = useElectionStore();
@@ -123,17 +124,29 @@ function HomePage() {
           </div>
         ) : elections.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-              {elections.slice(0, 6).map((election) => (
-                <ElectionCard
-                  key={election._id}
-                  election={election}
-                  onEdit={handleEditElection}
-                  onViewDetailsClick={handleViewDetailsClick}
-                  bannerUrl={useElectionStore.getState().getElectionImageUrl(election._id)}
-                />
-              ))}
-            </div>
+            <Carousel
+              opts={{
+                align: "start",
+              }}
+              className="w-full max-w-7xl mx-auto"
+            >
+              <CarouselContent>
+                {elections.slice(0, 6).map((election, index) => (
+                  <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                    <div className="p-1">
+                      <ElectionCard
+                        election={election}
+                        onEdit={handleEditElection}
+                        onViewDetailsClick={handleViewDetailsClick}
+                        bannerUrl={useElectionStore.getState().getElectionImageUrl(election._id)}
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
             <div className="text-center mt-12">
               <Link
                 to="/elections"

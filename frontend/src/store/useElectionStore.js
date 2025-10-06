@@ -7,9 +7,11 @@ const useElectionStore = create((set) => ({
   currentElection: null,
   loading: false,
   error: null,
+  message: null,
   isCreatingElection: false,
   isUpdatingElection: false,
   isDeletingElection: false,
+  isRequestingPincode: false,
 
   getElectionById: async (id) => {
     set({ loading: true, error: null });
@@ -35,6 +37,19 @@ const useElectionStore = create((set) => ({
       set({ error: errorMessage });
       toast.error(errorMessage);
       return false;
+    }
+  },
+
+  requestPincode: async (electionId) => {
+    set({ isRequestingPincode: true, error: null, message: null });
+    try {
+      const response = await api.post(`/elections/${electionId}/request-pincode`);
+      set({ message: response.data.message, isRequestingPincode: false });
+      toast.success(response.data.message);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "Failed to request pincode";
+      set({ error: errorMessage, isRequestingPincode: false });
+      toast.error(errorMessage);
     }
   },
 

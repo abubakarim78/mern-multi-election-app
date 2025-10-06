@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/store/useAuthStore";
 import useElectionStore from "@/store/useElectionStore";
 import { Calendar, Edit, Trash2, Eye } from "lucide-react";
+import RequestPincodeModal from "./modals/RequestPincodeModal";
 
 function ElectionCard({ election, onEdit, bannerUrl, onViewDetailsClick }) {
   const navigate = useNavigate();
@@ -109,6 +110,14 @@ function ElectionCard({ election, onEdit, bannerUrl, onViewDetailsClick }) {
             <Eye className="w-4 h-4" />
             View Details
           </button>
+
+          {user && user.role !== "Election Official" && (
+            <RequestPincodeModal electionId={election._id}>
+              <button className="px-5 py-2.5 bg-gray-600 cursor-pointer hover:bg-gray-700 text-white rounded-lg font-semibold transition-all duration-200 hover:shadow-md active:scale-95 flex items-center gap-2 text-sm">
+                Request Pincode
+              </button>
+            </RequestPincodeModal>
+          )}
           
           {user && user.role === "Election Official" && (
             <div className="flex gap-2">
