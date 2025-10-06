@@ -1,12 +1,10 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import useAuthStore from "@/store/useAuthStore";
 import useElectionStore from "@/store/useElectionStore";
 import { Calendar, Edit, Trash2, Eye } from "lucide-react";
 import RequestPincodeModal from "./modals/RequestPincodeModal";
 
 function ElectionCard({ election, onEdit, bannerUrl, onViewDetailsClick }) {
-  const navigate = useNavigate();
   const { user } = useAuthStore();
   const { deleteElection } = useElectionStore();
 
@@ -112,8 +110,11 @@ function ElectionCard({ election, onEdit, bannerUrl, onViewDetailsClick }) {
           </button>
 
           {user && user.role !== "Election Official" && (
-            <RequestPincodeModal electionId={election._id}>
-              <button className="px-5 py-2.5 bg-gray-600 cursor-pointer hover:bg-gray-700 text-white rounded-lg font-semibold transition-all duration-200 hover:shadow-md active:scale-95 flex items-center gap-2 text-sm">
+            <RequestPincodeModal electionId={election._id} electionStatus={isElectionActive()}>
+              <button
+                disabled={isElectionActive() !== 'active'}
+                className="px-5 py-2.5 bg-gray-600 cursor-pointer hover:bg-gray-700 text-white rounded-lg font-semibold transition-all duration-200 hover:shadow-md active:scale-95 flex items-center gap-2 text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
                 Request Pincode
               </button>
             </RequestPincodeModal>
