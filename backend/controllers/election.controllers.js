@@ -1,8 +1,19 @@
 import Election from "../models/election.model.js";
+import VoterRegistry from "../models/voter.registry.model.js";
+import sendEmail from "../utils/email.js";
+
+const generatePincode = (length = 10) => {
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+  let pincode = "";
+  for (let i = 0, n = charset.length; i < length; ++i) {
+    pincode += charset.charAt(Math.floor(Math.random() * n));
+  }
+  return pincode;
+};
 
 export const createElection = async (req, res) => {
   try {
-    const { title, description, startDate, endDate, candidates } = req.body;
+    const { title, description, startDate, endDate, candidates, voterEmails } = req.body;
 
     // Validate required fields
     if (!title || !description || !startDate || !endDate) {
@@ -30,7 +41,7 @@ export const createElection = async (req, res) => {
       });
     }
 
-    const pincode = Math.floor(100000 + Math.random() * 900000).toString();
+    const pincode = generatePincode();
 
     const electionData = {
       title,
@@ -53,6 +64,17 @@ export const createElection = async (req, res) => {
     const newElection = new Election(electionData);
     
     await newElection.save();
+
+    if (voterEmails) {
+      const emails = voterEmails.split(',').map(email => email.trim());
+      for (const email of emails) {
+        const voter = new VoterRegistry({
+          email,
+          election: newElection._id,
+        });
+        await voter.save();
+      }
+    }
     
     // Return without image data for performance
     const response = newElection.toObject();
@@ -80,7 +102,7 @@ export const getElections = async (req, res) => {
 export const getElectionById = async (req, res) => {
   try {
     const { id } = req.params;
-    const election = await Election.findById(id).select('-pincode');
+    const election = await Election.findById(id);
     if (!election) {
       return res.status(404).json({ message: "Election not found" });
     }
@@ -189,7 +211,7 @@ export const deleteElection = async (req, res) => {
 
 export const getElectionResults = async (req, res) => {
   try {
-    const elections = await Election.find().select("-image");
+    const elections = await Election.find();
 
     const results = elections.map(election => {
       const electionObject = election.toObject();
@@ -267,6 +289,35 @@ export const castVote = async (req, res) => {
     await election.save();
 
     res.status(200).json(election);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+export const requestPincode = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email } = req.user;
+
+    const election = await Election.findById(id);
+
+    if (!election) {
+      return res.status(404).json({ message: "Election not found" });
+    }
+
+    const voter = await VoterRegistry.findOne({ email, election: id });
+
+    if (!voter) {
+      return res.status(403).json({ message: "You are not eligible to vote in this election" });
+    }
+
+    await sendEmail({
+      to: email,
+      subject: `Your Pincode for ${election.title}`,
+      text: `Your pincode is: ${election.pincode}`,
+    });
+
+    res.status(200).json({ message: "Pincode sent to your email" });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
